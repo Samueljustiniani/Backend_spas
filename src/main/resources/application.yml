@@ -1,0 +1,47 @@
+spring:
+  application:
+    name: backend
+  datasource:
+    url: ${SPRING_DATASOURCE_URL:jdbc:postgresql://ep-misty-tree-ahfhrpsc-pooler.c-3.us-east-1.aws.neon.tech:5432/neondb?sslmode=require&channel_binding=require}
+    username: ${SPRING_DATASOURCE_USERNAME:neondb_owner}
+    password: ${SPRING_DATASOURCE_PASSWORD:npg_oB3uydW9POGA}
+    driver-class-name: org.postgresql.Driver
+  jpa:
+    hibernate:
+      ddl-auto: update
+    properties:
+      hibernate:
+        dialect: org.hibernate.dialect.PostgreSQLDialect
+  security:
+    oauth2:
+      client:
+        registration:
+          google:
+            # client-id: (set via env variable or local config)
+            # client-secret: (set via env variable or local config)
+            scope:
+              - openid
+              - profile
+              - email
+            redirect-uri: http://localhost:8085/login/oauth2/code/google
+        provider:
+          google:
+            authorization-uri: https://accounts.google.com/o/oauth2/auth
+            token-uri: https://oauth2.googleapis.com/token
+            user-info-uri: https://openidconnect.googleapis.com/v1/userinfo
+            jwk-set-uri: https://www.googleapis.com/oauth2/v3/certs
+            user-name-attribute: sub
+
+app:
+  jwt:
+    # IMPORTANT: must be at least 32 bytes (>=256 bits) for HS256
+    # Override with environment variable JWT_SECRET in production
+    secret: ${JWT_SECRET:nP4x9G7eQ2sT6vR1kM8bZ0cH5yW3uLqFjDgVhBnYpRsTuQwE}
+    expiration-ms: ${JWT_EXPIRATION_MS:3600000}
+
+server:
+  port: ${PORT:8085}
+
+logging:
+  level:
+    org.springframework: INFO
