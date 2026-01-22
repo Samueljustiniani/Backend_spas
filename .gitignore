@@ -1,3 +1,5 @@
+# No subir archivos de configuración sensibles
+src/main/resources/application.yml
 HELP.md
 target/
 .mvn/wrapper/maven-wrapper.jar
