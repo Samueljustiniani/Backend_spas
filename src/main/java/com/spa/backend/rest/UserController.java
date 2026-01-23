@@ -111,4 +111,20 @@ public class UserController {
         UserDTO restored = userService.update(id, user);
         return ResponseEntity.ok(restored);
     }
+
+    // =========================
+    // CONVERTIR USUARIO EN ADMIN (ADMIN)
+    // =========================
+
+    @PatchMapping("/{id}/make-admin")
+    @PreAuthorize("hasRole('ADMIN')")
+    public ResponseEntity<UserDTO> makeAdmin(@PathVariable("id") Long id) {
+        UserDTO user = userService.findById(id);
+        if (user == null) {
+            return ResponseEntity.notFound().build();
+        }
+        user.setRole("ROLE_ADMIN");
+        UserDTO updated = userService.update(id, user);
+        return ResponseEntity.ok(updated);
+    }
 }

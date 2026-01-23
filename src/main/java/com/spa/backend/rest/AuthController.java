@@ -58,4 +58,22 @@ public class AuthController {
         users.forEach(u -> u.setPassword(null));
         return ResponseEntity.ok(users);
     }
+
+    /**
+     * Devuelve el usuario actualmente autenticado (sin password).
+     * Se puede usar desde el frontend tras obtener el JWT.
+     */
+    @GetMapping("/me")
+    public ResponseEntity<User> me(java.security.Principal principal) {
+        if (principal == null) {
+            return ResponseEntity.status(401).build();
+        }
+        String email = principal.getName();
+        return userRepository.findByEmail(email)
+                .map(u -> {
+                    u.setPassword(null);
+                    return ResponseEntity.ok(u);
+                })
+                .orElse(ResponseEntity.notFound().build());
+    }
 }

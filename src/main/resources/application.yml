@@ -17,8 +17,8 @@ spring:
       client:
         registration:
           google:
-            # client-id: (set via env variable or local config)
-            # client-secret: (set via env variable or local config)
+            #client-id: 
+            #client-secret: 
             scope:
               - openid
               - profile
