@@ -7,6 +7,7 @@ import java.util.Optional;
 
 public interface ServiceService {
     List<ServiceEntity> findAll();
+    List<ServiceEntity> findByStatus(String status);
     Optional<ServiceEntity> findById(Long id);
     ServiceEntity save(ServiceEntity service);
     void deleteById(Long id);

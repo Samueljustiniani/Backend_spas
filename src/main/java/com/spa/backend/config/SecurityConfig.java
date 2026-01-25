@@ -58,11 +58,12 @@ public class SecurityConfig {
             // Cambiado a IF_REQUIRED para permitir sesiones durante OAuth2
             .sessionManagement(sm -> sm.sessionCreationPolicy(SessionCreationPolicy.IF_REQUIRED))
             .authorizeHttpRequests(auth -> auth
-                // Permitir acceso sin autenticación a estos endpoints
-                .requestMatchers("/v1/api/auth/**").permitAll()
+                // Permitir acceso sin autenticación solo a los endpoints necesarios para login/registro/OAuth
+                .requestMatchers("/v1/api/auth/login", "/v1/api/auth/register", "/v1/api/auth/oauth2/success").permitAll()
                 .requestMatchers("/oauth2/**", "/login/oauth2/**").permitAll()
                 .requestMatchers("/actuator/**", "/static/**", "/", "/index.html", "/login.html").permitAll()
                 .requestMatchers(HttpMethod.GET, "/v1/api/public/**").permitAll()
+                .requestMatchers(HttpMethod.GET, "/v1/api/services/**").permitAll()
                 .anyRequest().authenticated()
             )
             // OAuth2 login solo se activa cuando el usuario va a /oauth2/authorization/google

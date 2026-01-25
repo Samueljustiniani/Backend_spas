@@ -19,9 +19,14 @@ public class ServiceEntityController {
         this.serviceService = serviceService;
     }
 
+
     @GetMapping
-    public ResponseEntity<List<ServiceEntity>> list() {
-        return ResponseEntity.ok(serviceService.findAll());
+    public ResponseEntity<List<ServiceEntity>> list(@RequestParam(value = "status", required = false) String status) {
+        if (status == null) {
+            return ResponseEntity.ok(serviceService.findAll());
+        } else {
+            return ResponseEntity.ok(serviceService.findByStatus(status));
+        }
     }
 
     @GetMapping("/{id}")

@@ -27,4 +27,10 @@ public class ServiceEntity {
 
     @Column(name = "price", nullable = false)
     private java.math.BigDecimal price;
+
+    @Column(name = "gender", nullable = false)
+    private String gender; // "M" = Masculino, "F" = Femenino, "U" = Unisex
+
+    @Column(name = "status", nullable = false)
+    private String status; // "A" = Activo, "I" = Inactivo
 }

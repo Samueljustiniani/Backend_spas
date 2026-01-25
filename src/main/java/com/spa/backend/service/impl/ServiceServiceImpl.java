@@ -21,10 +21,18 @@ public class ServiceServiceImpl implements ServiceService {
     public List<ServiceEntity> findAll() { return repo.findAll(); }
 
     @Override
+    public List<ServiceEntity> findByStatus(String status) { return repo.findByStatus(status); }
+
+    @Override
     public Optional<ServiceEntity> findById(Long id) { return repo.findById(id); }
 
     @Override
-    public ServiceEntity save(ServiceEntity service) { return repo.save(service); }
+    public ServiceEntity save(ServiceEntity service) {
+        if (service.getStatus() == null || service.getStatus().isEmpty()) {
+            service.setStatus("A");
+        }
+        return repo.save(service);
+    }
 
     @Override
     public void deleteById(Long id) { repo.deleteById(id); }

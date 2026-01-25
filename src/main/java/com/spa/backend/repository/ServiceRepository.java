@@ -6,4 +6,5 @@ import org.springframework.stereotype.Repository;
 
 @Repository
 public interface ServiceRepository extends JpaRepository<ServiceEntity, Long> {
+	java.util.List<ServiceEntity> findByStatus(String status);
 }
