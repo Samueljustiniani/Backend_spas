@@ -34,6 +34,4 @@ public class ServiceServiceImpl implements ServiceService {
         return repo.save(service);
     }
 
-    @Override
-    public void deleteById(Long id) { repo.deleteById(id); }
 }

@@ -16,6 +16,16 @@ import java.util.List;
 @RestController
 @RequestMapping("/v1/api/quotes")
 public class QuoteController {
+    @GetMapping("/hours-range")
+    public ResponseEntity<?> getHoursRange() {
+        // Puedes cambiar estos valores si lo deseas
+        LocalTime opening = LocalTime.of(8, 0);
+        LocalTime closing = LocalTime.of(20, 0);
+        return ResponseEntity.ok(new java.util.HashMap<String, String>() {{
+            put("opening", opening.toString());
+            put("closing", closing.toString());
+        }});
+    }
 
     private final QuoteService quoteService;
 

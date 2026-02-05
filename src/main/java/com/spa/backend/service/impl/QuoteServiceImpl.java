@@ -51,22 +51,42 @@ public class QuoteServiceImpl implements QuoteService {
     @Override
     @Transactional
     public QuoteResponse create(QuoteRequest request) {
+
+        // Validar campos obligatorios
+        if (request.getUserId() == null) throw new RuntimeException("El id de usuario no puede ser null");
+        if (request.getRoomId() == null) throw new RuntimeException("El id de sala no puede ser null");
+        if (request.getServiceIds() == null || request.getServiceIds().isEmpty()) throw new RuntimeException("Debe enviar al menos un id de servicio");
+        if (request.getQuoteDate() == null) throw new RuntimeException("La fecha de la cita no puede ser null");
+        if (request.getStartTime() == null || request.getEndTime() == null) throw new RuntimeException("La hora de inicio y fin no pueden ser null");
+
+        // Validar rango horario permitido (08:00 a 20:00)
+        LocalTime opening = LocalTime.of(8, 0);
+        LocalTime closing = LocalTime.of(20, 0);
+        if (request.getStartTime().isBefore(opening) || request.getEndTime().isAfter(closing)) {
+            throw new RuntimeException("Las citas solo pueden agendarse entre 08:00 y 20:00");
+        }
+
         // Validar disponibilidad del horario
         if (!isTimeSlotAvailable(request.getRoomId(), request.getQuoteDate(), 
-                request.getStartTime(), request.getEndTime())) {
+            request.getStartTime(), request.getEndTime())) {
             throw new RuntimeException("El horario seleccionado no está disponible");
         }
 
         User user = userRepository.findById(request.getUserId())
-                .orElseThrow(() -> new RuntimeException("Usuario no encontrado"));
-        ServiceEntity service = serviceRepository.findById(request.getServiceId())
-                .orElseThrow(() -> new RuntimeException("Servicio no encontrado"));
+            .orElseThrow(() -> new RuntimeException("Usuario no encontrado"));
+        List<ServiceEntity> services = request.getServiceIds().stream()
+            .map(id -> {
+                if (id == null) throw new RuntimeException("Uno de los ids de servicio es null");
+                return serviceRepository.findById(id)
+                .orElseThrow(() -> new RuntimeException("Servicio no encontrado: " + id));
+            })
+            .collect(Collectors.toList());
         Room room = roomRepository.findById(request.getRoomId())
-                .orElseThrow(() -> new RuntimeException("Sala no encontrada"));
+            .orElseThrow(() -> new RuntimeException("Sala no encontrada"));
 
         Quote quote = new Quote();
         quote.setUser(user);
-        quote.setService(service);
+        quote.setServices(services);
         quote.setRoom(room);
         quote.setQuoteDate(request.getQuoteDate());
         quote.setStartTime(request.getStartTime());
@@ -115,17 +135,17 @@ public class QuoteServiceImpl implements QuoteService {
 
     private QuoteResponse toResponse(Quote quote) {
         return QuoteResponse.builder()
-                .id(quote.getId())
-                .quoteDate(quote.getQuoteDate())
-                .startTime(quote.getStartTime())
-                .endTime(quote.getEndTime())
-                .status(quote.getStatus())
-                .userId(quote.getUser().getId())
-                .userName(quote.getUser().getName() + " " + (quote.getUser().getLastname() != null ? quote.getUser().getLastname() : ""))
-                .serviceId(quote.getService().getId())
-                .serviceName(quote.getService().getName())
-                .roomId(quote.getRoom().getId())
-                .roomName(quote.getRoom().getName())
-                .build();
+            .id(quote.getId())
+            .quoteDate(quote.getQuoteDate())
+            .startTime(quote.getStartTime())
+            .endTime(quote.getEndTime())
+            .status(quote.getStatus())
+            .userId(quote.getUser().getId())
+            .userName(quote.getUser().getName() + " " + (quote.getUser().getLastname() != null ? quote.getUser().getLastname() : ""))
+            .serviceIds(quote.getServices().stream().map(ServiceEntity::getId).collect(Collectors.toList()))
+            .serviceNames(quote.getServices().stream().map(ServiceEntity::getName).collect(Collectors.toList()))
+            .roomId(quote.getRoom().getId())
+            .roomName(quote.getRoom().getName())
+            .build();
     }
 }

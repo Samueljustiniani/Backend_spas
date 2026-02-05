@@ -35,14 +35,14 @@ public class ServiceEntityController {
     }
 
     @PostMapping
-    @PreAuthorize("hasRole('ADMIN')")
+    @PreAuthorize("hasRole('ROLE_ADMIN')")
     public ResponseEntity<ServiceEntity> create(@RequestBody ServiceEntity service) {
         ServiceEntity saved = serviceService.save(service);
         return ResponseEntity.created(URI.create("/v1/api/services/" + saved.getId())).body(saved);
     }
 
     @PutMapping("/{id}")
-    @PreAuthorize("hasRole('ADMIN')")
+    @PreAuthorize("hasRole('ROLE_ADMIN')")
     public ResponseEntity<ServiceEntity> update(@PathVariable Long id, @RequestBody ServiceEntity service) {
         return serviceService.findById(id).map(existing -> {
             service.setId(existing.getId());
@@ -52,10 +52,31 @@ public class ServiceEntityController {
     }
 
     @DeleteMapping("/{id}")
-    @PreAuthorize("hasRole('ADMIN')")
+    @PreAuthorize("hasRole('ROLE_ADMIN')")
     public ResponseEntity<Void> delete(@PathVariable Long id) {
-        if (serviceService.findById(id).isEmpty()) return ResponseEntity.notFound().build();
-        serviceService.deleteById(id);
-        return ResponseEntity.noContent().build();
+        return serviceService.findById(id).map(service -> {
+            try {
+                service.setStatus("I");
+                ServiceEntity updated = serviceService.save(service);
+                if ("I".equals(updated.getStatus())) {
+                    return ResponseEntity.noContent().<Void>build();
+                } else {
+                    return ResponseEntity.status(500).<Void>build();
+                }
+            } catch (Exception e) {
+                e.printStackTrace();
+                return ResponseEntity.status(500).<Void>build();
+            }
+        }).orElseGet(() -> ResponseEntity.notFound().build());
+    }
+
+    @PatchMapping("/{id}/restore")
+    @PreAuthorize("hasRole('ROLE_ADMIN')")
+    public ResponseEntity<ServiceEntity> restore(@PathVariable Long id) {
+        return serviceService.findById(id).map(service -> {
+            service.setStatus("A");
+            ServiceEntity restored = serviceService.save(service);
+            return ResponseEntity.ok(restored);
+        }).orElseGet(() -> ResponseEntity.notFound().build());
     }
 }

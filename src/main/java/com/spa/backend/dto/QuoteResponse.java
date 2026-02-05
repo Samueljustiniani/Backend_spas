@@ -16,8 +16,8 @@ public class QuoteResponse {
     private String status;
     private Long userId;
     private String userName;
-    private Long serviceId;
-    private String serviceName;
+    private java.util.List<Long> serviceIds;
+    private java.util.List<String> serviceNames;
     private Long roomId;
     private String roomName;
 }

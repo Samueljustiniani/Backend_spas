@@ -10,5 +10,4 @@ public interface ServiceService {
     List<ServiceEntity> findByStatus(String status);
     Optional<ServiceEntity> findById(Long id);
     ServiceEntity save(ServiceEntity service);
-    void deleteById(Long id);
 }

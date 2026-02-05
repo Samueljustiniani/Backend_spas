@@ -35,9 +35,13 @@ public class Quote {
     @JoinColumn(name = "id_user", nullable = false)
     private User user;
 
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "id_service", nullable = false)
-    private ServiceEntity service;
+    @ManyToMany(fetch = FetchType.LAZY)
+    @JoinTable(
+        name = "quote_services",
+        joinColumns = @JoinColumn(name = "id_quote"),
+        inverseJoinColumns = @JoinColumn(name = "id_service")
+    )
+    private java.util.List<ServiceEntity> services;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "id_room", nullable = false)

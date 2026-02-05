@@ -8,7 +8,7 @@ import java.time.LocalTime;
 @Data
 public class QuoteRequest {
     private Long userId;
-    private Long serviceId;
+    private java.util.List<Long> serviceIds;
     private Long roomId;
     private LocalDate quoteDate;
     private LocalTime startTime;
