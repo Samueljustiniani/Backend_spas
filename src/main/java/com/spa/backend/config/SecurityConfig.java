@@ -85,8 +85,10 @@ public class SecurityConfig {
                     // Invalidar la sesión HTTP después de obtener el token
                     request.getSession().invalidate();
                     
+                    // frontendspa.vercel.app o localhost:4200
+
                     // Redirigir directamente al frontend con el token en query string
-                    String frontendRedirect = "http://localhost:4200/auth/callback?token=" + token;
+                    String frontendRedirect = "frontendspa.vercel.app/auth/callback?token=" + token;
                     response.sendRedirect(frontendRedirect);
                 })
             );
