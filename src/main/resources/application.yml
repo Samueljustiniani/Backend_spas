@@ -23,7 +23,7 @@ spring:
               - openid
               - profile
               - email
-            redirect-uri: https://frontendspa.vercel.app/auth/callback
+            redirect-uri: https://backend-spas.onrender.com/login/oauth2/code/google
         provider:
           google:
             authorization-uri: https://accounts.google.com/o/oauth2/auth
