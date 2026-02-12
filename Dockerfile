@@ -10,8 +10,8 @@ FROM eclipse-temurin:17-jre-alpine
 WORKDIR /app
 COPY --from=build /app/target/*.jar app.jar
 
+
 EXPOSE 8085
-COPY Wallet_A7OUG9ZHFSCPFJ2S /app/Wallet_A7OUG9ZHFSCPFJ2S
 ENTRYPOINT ["java", "-jar", "app.jar"]
 
 
