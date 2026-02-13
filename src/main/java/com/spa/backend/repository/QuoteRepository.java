@@ -14,6 +14,7 @@ import java.util.List;
 public interface QuoteRepository extends JpaRepository<Quote, Long> {
     List<Quote> findByUserId(Long userId);
     List<Quote> findByQuoteDate(LocalDate date);
+    List<Quote> findByQuoteDateAndStatus(LocalDate quoteDate, String status);
     
     @Query("SELECT q FROM Quote q WHERE q.room.id = :roomId AND q.quoteDate = :date " +
            "AND q.status <> 'C' AND ((q.startTime < :endTime AND q.endTime > :startTime))")
