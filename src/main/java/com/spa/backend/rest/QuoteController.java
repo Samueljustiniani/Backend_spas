@@ -55,7 +55,7 @@ public class QuoteController {
     }
 
     @GetMapping("/user/{userId}")
-    @PreAuthorize("hasAnyRole('ADMIN', 'USER') and (@userService.isOwner(#userId, principal.username) or hasRole('ADMIN'))")
+    @PreAuthorize("hasRole('ADMIN') or @userService.isOwner(#userId, principal.username)")
     public ResponseEntity<List<QuoteResponse>> getByUser(@PathVariable Long userId) {
         return ResponseEntity.ok(quoteService.findByUserId(userId));
     }
