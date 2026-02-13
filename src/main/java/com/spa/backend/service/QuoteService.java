@@ -16,4 +16,13 @@ public interface QuoteService {
     List<QuoteResponse> findByUserId(Long userId);
     List<QuoteResponse> findByDate(LocalDate date);
     boolean isTimeSlotAvailable(Long roomId, LocalDate date, java.time.LocalTime startTime, java.time.LocalTime endTime);
+    /**
+     * Marca citas pendientes como inactivas automáticamente
+     */
+    void markPendingQuotesInactive();
+
+    /**
+     * Reactiva una cita si el horario está libre
+     */
+    QuoteResponse reactivateQuote(Long quoteId);
 }

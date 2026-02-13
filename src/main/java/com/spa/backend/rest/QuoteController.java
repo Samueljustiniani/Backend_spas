@@ -16,6 +16,13 @@ import java.util.List;
 @RestController
 @RequestMapping("/v1/api/quotes")
 public class QuoteController {
+        @PatchMapping("/{id}/reactivate")
+        @PreAuthorize("hasAnyRole('ADMIN', 'USER')")
+        public ResponseEntity<QuoteResponse> reactivate(@PathVariable Long id) {
+            QuoteResponse updated = quoteService.reactivateQuote(id);
+            if (updated == null) return ResponseEntity.badRequest().build();
+            return ResponseEntity.ok(updated);
+        }
     @GetMapping("/hours-range")
     public ResponseEntity<?> getHoursRange() {
         // Puedes cambiar estos valores si lo deseas

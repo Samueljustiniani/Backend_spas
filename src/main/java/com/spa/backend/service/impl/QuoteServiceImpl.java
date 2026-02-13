@@ -22,6 +22,34 @@ import java.util.stream.Collectors;
 
 @Service
 public class QuoteServiceImpl implements QuoteService {
+    @Override
+    @org.springframework.scheduling.annotation.Scheduled(cron = "0 59 23 * * *") // Todos los días a las 23:59
+    public void markPendingQuotesInactive() {
+        LocalDate tomorrow = LocalDate.now().plusDays(1);
+        List<Quote> pendientes = quoteRepository.findByQuoteDateAndStatus(tomorrow, "P");
+        for (Quote q : pendientes) {
+            q.setStatus("I"); // I = Inactiva
+            quoteRepository.save(q);
+        }
+    }
+
+    @Override
+    public QuoteResponse reactivateQuote(Long quoteId) {
+        Optional<Quote> quoteOpt = quoteRepository.findById(quoteId);
+        if (quoteOpt.isEmpty()) return null;
+        Quote quote = quoteOpt.get();
+        // Solo reactiva si el horario está libre
+        boolean disponible = isTimeSlotAvailable(
+            quote.getRoom().getId(),
+            quote.getQuoteDate(),
+            quote.getStartTime(),
+            quote.getEndTime()
+        );
+        if (!disponible) return null;
+        quote.setStatus("P");
+        quoteRepository.save(quote);
+        return toResponse(quote);
+    }
 
     private final QuoteRepository quoteRepository;
     private final UserRepository userRepository;
