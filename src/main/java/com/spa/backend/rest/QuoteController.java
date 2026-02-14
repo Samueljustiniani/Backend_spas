@@ -55,9 +55,13 @@ public class QuoteController {
     }
 
     @GetMapping("/user/{userId}")
-    @PreAuthorize("hasRole('ADMIN') or @userService.isOwner(#userId, principal.username)")
-    public ResponseEntity<List<QuoteResponse>> getByUser(@PathVariable Long userId) {
-        return ResponseEntity.ok(quoteService.findByUserId(userId));
+    @PreAuthorize("isAuthenticated()")
+    public ResponseEntity<List<QuoteResponse>> getByUser(@PathVariable Long userId, java.security.Principal principal) {
+        // Admin puede ver todas las citas, usuario normal solo las suyas
+        if (quoteService.canUserAccessQuotes(userId, principal.getName())) {
+            return ResponseEntity.ok(quoteService.findByUserId(userId));
+        }
+        return ResponseEntity.status(403).build();
     }
 
     @GetMapping("/date/{date}")

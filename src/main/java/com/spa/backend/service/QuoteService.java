@@ -25,4 +25,9 @@ public interface QuoteService {
      * Reactiva una cita si el horario está libre
      */
     QuoteResponse reactivateQuote(Long quoteId);
+
+    /**
+     * Verifica si un usuario puede acceder a las citas del userId
+     */
+    boolean canUserAccessQuotes(Long userId, String email);
 }

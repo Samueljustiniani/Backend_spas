@@ -161,6 +161,23 @@ public class QuoteServiceImpl implements QuoteService {
         return conflicts.isEmpty();
     }
 
+    @Override
+    public boolean canUserAccessQuotes(Long userId, String email) {
+        // Verificar si el usuario es el dueño de las citas o es admin
+        return userRepository.findById(userId)
+            .map(user -> {
+                // Si el email coincide, puede ver sus citas
+                if (user.getEmail().equalsIgnoreCase(email)) {
+                    return true;
+                }
+                // Si el usuario autenticado es admin, puede ver cualquier cita
+                return userRepository.findByEmail(email)
+                    .map(authUser -> "ROLE_ADMIN".equals(authUser.getRole()))
+                    .orElse(false);
+            })
+            .orElse(false);
+    }
+
     private QuoteResponse toResponse(Quote quote) {
         return QuoteResponse.builder()
             .id(quote.getId())
