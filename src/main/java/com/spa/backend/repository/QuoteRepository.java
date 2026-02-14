@@ -17,7 +17,7 @@ public interface QuoteRepository extends JpaRepository<Quote, Long> {
     List<Quote> findByQuoteDateAndStatus(LocalDate quoteDate, String status);
     
     @Query("SELECT q FROM Quote q WHERE q.room.id = :roomId AND q.quoteDate = :date " +
-           "AND q.status <> 'C' AND ((q.startTime < :endTime AND q.endTime > :startTime))")
+           "AND q.status NOT IN ('C', 'I') AND ((q.startTime < :endTime AND q.endTime > :startTime))")
     List<Quote> findConflictingQuotes(@Param("roomId") Long roomId, 
                                        @Param("date") LocalDate date,
                                        @Param("startTime") LocalTime startTime,

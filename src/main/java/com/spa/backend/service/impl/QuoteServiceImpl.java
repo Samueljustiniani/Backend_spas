@@ -23,12 +23,17 @@ import java.util.stream.Collectors;
 @Service
 public class QuoteServiceImpl implements QuoteService {
     @Override
-    @org.springframework.scheduling.annotation.Scheduled(cron = "0 59 23 * * *") // Todos los días a las 23:59
+    @org.springframework.scheduling.annotation.Scheduled(fixedRate = 600000) // Cada 10 minutos
     public void markPendingQuotesInactive() {
-        LocalDate tomorrow = LocalDate.now().plusDays(1);
-        List<Quote> pendientes = quoteRepository.findByQuoteDateAndStatus(tomorrow, "P");
-        for (Quote q : pendientes) {
-            q.setStatus("I"); // I = Inactiva
+        // Cancelar citas pendientes creadas hace más de 2 horas sin confirmar
+        java.time.LocalDateTime twoHoursAgo = java.time.LocalDateTime.now().minusHours(2);
+        List<Quote> allPending = quoteRepository.findAll().stream()
+            .filter(q -> "P".equals(q.getStatus()))
+            .filter(q -> q.getCreatedAt() != null && q.getCreatedAt().isBefore(twoHoursAgo))
+            .collect(Collectors.toList());
+        
+        for (Quote q : allPending) {
+            q.setStatus("I"); // I = Inactiva (no confirmada en 2 horas, horario liberado)
             quoteRepository.save(q);
         }
     }
@@ -94,6 +99,20 @@ public class QuoteServiceImpl implements QuoteService {
             throw new RuntimeException("Las citas solo pueden agendarse entre 08:00 y 20:00");
         }
 
+        // Validar que no se creen citas en fechas pasadas
+        LocalDate today = LocalDate.now();
+        if (request.getQuoteDate().isBefore(today)) {
+            throw new RuntimeException("No se pueden crear citas en fechas pasadas");
+        }
+
+        // Validar que si es el mismo día, la hora de inicio sea posterior a la hora actual
+        if (request.getQuoteDate().isEqual(today)) {
+            LocalTime now = LocalTime.now();
+            if (request.getStartTime().isBefore(now)) {
+                throw new RuntimeException("No se pueden crear citas en horas que ya pasaron");
+            }
+        }
+
         // Validar disponibilidad del horario
         if (!isTimeSlotAvailable(request.getRoomId(), request.getQuoteDate(), 
             request.getStartTime(), request.getEndTime())) {
@@ -120,6 +139,7 @@ public class QuoteServiceImpl implements QuoteService {
         quote.setStartTime(request.getStartTime());
         quote.setEndTime(request.getEndTime());
         quote.setStatus("P"); // P = Pendiente
+        quote.setCreatedAt(java.time.LocalDateTime.now());
 
         Quote saved = quoteRepository.save(quote);
         return toResponse(saved);
