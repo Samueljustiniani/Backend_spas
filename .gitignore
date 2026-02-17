@@ -1,8 +1,7 @@
 /.env
-# No subir archivos de configuración sensibles
-src/main/resources/application.yml
-HELP.md
+# No subir archivos generados
 target/
+logs/
 .mvn/wrapper/maven-wrapper.jar
 !**/src/main/**/target/
 !**/src/test/**/target/

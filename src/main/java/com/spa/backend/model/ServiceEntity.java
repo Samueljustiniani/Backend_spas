@@ -31,6 +31,9 @@ public class ServiceEntity {
     @Column(name = "gender", nullable = false)
     private String gender; // "M" = Masculino, "F" = Femenino, "U" = Unisex
 
+    @Column(name = "image_url")
+    private String imageUrl;
+
     @Column(name = "status", nullable = false)
     private String status; // "A" = Activo, "I" = Inactivo
 }

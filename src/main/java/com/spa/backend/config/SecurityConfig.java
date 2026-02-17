@@ -22,6 +22,8 @@ import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 @EnableMethodSecurity
 public class SecurityConfig {
 
+    private static final org.slf4j.Logger log = org.slf4j.LoggerFactory.getLogger(SecurityConfig.class);
+
     private final JwtAuthenticationFilter jwtAuthenticationFilter;
     private final JwtAuthenticationEntryPoint unauthorizedHandler;
     private final com.spa.backend.security.CustomOAuth2UserService customOAuth2UserService;
@@ -70,6 +72,8 @@ public class SecurityConfig {
             .oauth2Login(oauth2 -> oauth2
                 .userInfoEndpoint(userInfo -> userInfo.oidcUserService(oidcUserService()))
                 .successHandler((request, response, authentication) -> {
+                    log.info("=== OAUTH2 LOGIN SUCCESS ===");
+                    
                     // Obtener el email del usuario de Google
                     String email = null;
                     Object principal = authentication.getPrincipal();
@@ -79,8 +83,11 @@ public class SecurityConfig {
                         email = ((OAuth2User) principal).getAttribute("email");
                     }
                     
+                    log.info("OAuth2 user email: {}", email);
+                    
                     // Generar JWT token
                     String token = jwtUtil.generateToken(email);
+                    log.debug("JWT token generated for OAuth2 user");
                     
                     // Invalidar la sesión HTTP después de obtener el token
                     request.getSession().invalidate();
@@ -88,8 +95,9 @@ public class SecurityConfig {
                     // https://frontendspa.vercel.app o localhost:4200
 
                     // Redirigir directamente al frontend con el token en query string
-                                        String frontendRedirect = "https://frontendspa.vercel.app/auth/callback?token=" + token;
-                                        response.sendRedirect(frontendRedirect);
+                    String frontendRedirect = "https://frontendspa.vercel.app/auth/callback?token=" + token;
+                    log.info("Redirecting to frontend: {}", frontendRedirect);
+                    response.sendRedirect(frontendRedirect);
                 })
             );
 

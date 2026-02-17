@@ -6,12 +6,19 @@ spring:
     username: ${SPRING_DATASOURCE_USERNAME:neondb_owner}
     password: ${SPRING_DATASOURCE_PASSWORD:npg_oB3uydW9POGA}
     driver-class-name: org.postgresql.Driver
+    hikari:
+      maximum-pool-size: 5
+      minimum-idle: 2
   jpa:
     hibernate:
       ddl-auto: update
     properties:
       hibernate:
         dialect: org.hibernate.dialect.PostgreSQLDialect
+        jdbc:
+          batch_size: 20
+        order_inserts: true
+        order_updates: true
   security:
     oauth2:
       client:
@@ -23,7 +30,7 @@ spring:
               - openid
               - profile
               - email
-            redirect-uri: https://backend-spas.onrender.com/login/oauth2/code/google
+            redirect-uri: ${OAUTH2_REDIRECT_URI:https://backend-spas.onrender.com/login/oauth2/code/google}
         provider:
           google:
             authorization-uri: https://accounts.google.com/o/oauth2/auth
@@ -31,17 +38,41 @@ spring:
             user-info-uri: https://openidconnect.googleapis.com/v1/userinfo
             jwk-set-uri: https://www.googleapis.com/oauth2/v3/certs
             user-name-attribute: sub
+  servlet:
+    multipart:
+      enabled: true
+      max-file-size: ${MAX_FILE_SIZE:10MB}
+      max-request-size: ${MAX_REQUEST_SIZE:10MB}
 
 app:
   jwt:
-    # IMPORTANT: must be at least 32 bytes (>=256 bits) for HS256
-    # Override with environment variable JWT_SECRET in production
     secret: ${JWT_SECRET:nP4x9G7eQ2sT6vR1kM8bZ0cH5yW3uLqFjDgVhBnYpRsTuQwE}
     expiration-ms: ${JWT_EXPIRATION_MS:3600000}
 
+cloudinary:
+  cloud_name: ${CLOUDINARY_CLOUD_NAME}
+  api_key: ${CLOUDINARY_API_KEY}
+  api_secret: ${CLOUDINARY_API_SECRET}
+
 server:
   port: ${PORT:8085}
+  servlet:
+    context-path: /
+  compression:
+    enabled: true
+    min-response-size: 1024
 
 logging:
   level:
+    root: ${LOG_LEVEL:INFO}
+    com.spa.backend: ${APP_LOG_LEVEL:DEBUG}
+    org.springframework.web: ${SPRING_LOG_LEVEL:INFO}
+    org.springframework.security: ${SECURITY_LOG_LEVEL:INFO}
+    org.hibernate.SQL: ${HIBERNATE_LOG_LEVEL:INFO}
     org.springframework: INFO
+  pattern:
+    console: '%d{yyyy-MM-dd HH:mm:ss} - %msg%n'
+  file:
+    name: ${LOG_FILE_PATH:logs/spa-backend.log}
+    max-size: 10MB
+    max-history: 30

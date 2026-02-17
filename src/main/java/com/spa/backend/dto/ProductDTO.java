@@ -10,13 +10,12 @@ import java.math.BigDecimal;
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
-public class ServiceDTO {
+public class ProductDTO {
     private Long id;
     private String name;
     private String description;
-    private Integer durationMinutes;
     private BigDecimal price;
-    private String gender; // "M" = Masculino, "F" = Femenino, "U" = Unisex
+    private Integer stock;
     private String imageUrl;
-    private String status; // "A" = Activo, "I" = Inactivo
+    private String status;
 }
