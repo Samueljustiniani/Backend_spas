@@ -20,4 +20,6 @@ public class QuoteResponse {
     private java.util.List<String> serviceNames;
     private Long roomId;
     private String roomName;
+    private Integer totalDurationMinutes;
+    private java.math.BigDecimal totalPrice;
 }

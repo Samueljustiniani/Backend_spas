@@ -12,5 +12,6 @@ public class QuoteRequest {
     private Long roomId;
     private LocalDate quoteDate;
     private LocalTime startTime;
-    private LocalTime endTime;
+    // endTime se calcula automáticamente según la duración de los servicios
+    // totalDurationMinutes y totalPrice se calculan en el backend
 }

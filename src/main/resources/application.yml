@@ -48,6 +48,9 @@ app:
   jwt:
     secret: ${JWT_SECRET:nP4x9G7eQ2sT6vR1kM8bZ0cH5yW3uLqFjDgVhBnYpRsTuQwE}
     expiration-ms: ${JWT_EXPIRATION_MS:3600000}
+  pricing:
+    price-per-hour: ${PRICE_PER_HOUR:100.00}
+    max-duration-hours: ${MAX_DURATION_HOURS:4}
 
 cloudinary:
   cloud_name: ${CLOUDINARY_CLOUD_NAME}

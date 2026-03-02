@@ -34,6 +34,29 @@ public class QuoteController {
         }});
     }
 
+    /**
+     * Obtiene los slots disponibles para una sala en una fecha,
+     * considerando la duración de los servicios seleccionados.
+     * Ejemplo: GET /v1/api/quotes/available-slots?roomId=1&date=2026-03-10&serviceIds=1,2,3
+     */
+    @GetMapping("/available-slots")
+    public ResponseEntity<List<LocalTime>> getAvailableSlots(
+            @RequestParam Long roomId,
+            @RequestParam @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate date,
+            @RequestParam List<Long> serviceIds) {
+        return ResponseEntity.ok(quoteService.getAvailableSlots(roomId, date, serviceIds));
+    }
+
+    /**
+     * Calcula el estimado de duración y precio para los servicios seleccionados.
+     * Ejemplo: POST /v1/api/quotes/estimate con body: {"serviceIds": [1,2,3]}
+     */
+    @PostMapping("/estimate")
+    public ResponseEntity<java.util.Map<String, Object>> calculateEstimate(@RequestBody java.util.Map<String, List<Long>> request) {
+        List<Long> serviceIds = request.get("serviceIds");
+        return ResponseEntity.ok(quoteService.calculateEstimate(serviceIds));
+    }
+
     private final QuoteService quoteService;
 
     public QuoteController(QuoteService quoteService) {

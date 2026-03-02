@@ -16,6 +16,22 @@ public interface QuoteService {
     List<QuoteResponse> findByUserId(Long userId);
     List<QuoteResponse> findByDate(LocalDate date);
     boolean isTimeSlotAvailable(Long roomId, LocalDate date, java.time.LocalTime startTime, java.time.LocalTime endTime);
+    
+    /**
+     * Obtiene los slots disponibles para una sala en una fecha dada,
+     * considerando la duración total de los servicios seleccionados.
+     * @param roomId ID de la sala
+     * @param date Fecha de la cita
+     * @param serviceIds Lista de IDs de servicios seleccionados
+     * @return Lista de horas de inicio disponibles
+     */
+    java.util.List<java.time.LocalTime> getAvailableSlots(Long roomId, LocalDate date, java.util.List<Long> serviceIds);
+    
+    /**
+     * Calcula la duración total y precio estimado para una lista de servicios
+     */
+    java.util.Map<String, Object> calculateEstimate(java.util.List<Long> serviceIds);
+    
     /**
      * Marca citas pendientes como inactivas automáticamente
      */

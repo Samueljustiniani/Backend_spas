@@ -35,6 +35,12 @@ public class Quote {
     @Column(name = "created_at")
     private LocalDateTime createdAt;
 
+    @Column(name = "total_duration_minutes")
+    private Integer totalDurationMinutes;
+
+    @Column(name = "total_price", precision = 10, scale = 2)
+    private java.math.BigDecimal totalPrice;
+
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "id_user", nullable = false)
     private User user;
